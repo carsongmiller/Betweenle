@@ -103,6 +103,7 @@ namespace Betweenle
 
 			barPlot.ValueLabelStyle.Bold = true;
 			barPlot.ValueLabelStyle.FontSize = 18;
+			barPlot.Color = ScottPlot.Color.FromColor(System.Drawing.Color.Orange);
 
 			AutoScalePlot();
 		}

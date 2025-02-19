@@ -101,6 +101,7 @@
 			// tbMessages
 			// 
 			tbMessages.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			tbMessages.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
 			tbMessages.Location = new Point(743, 73);
 			tbMessages.Multiline = true;
 			tbMessages.Name = "tbMessages";
