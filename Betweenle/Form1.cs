@@ -1,5 +1,9 @@
 
 using System.Text.Json;
+using Microsoft.VisualBasic;
+using ScottPlot;
+using ScottPlot.Plottables;
+using ScottPlot.TickGenerators;
 
 namespace Betweenle
 {
@@ -11,7 +15,9 @@ namespace Betweenle
 		Random rand;
 		Records records = new Records();
 		string recordsFilename = "records.json";
+		bool alreadyCorrect = false;
 
+		Dictionary<double, double> plotRecords = new();
 
 		int guesses
 		{
@@ -41,12 +47,70 @@ namespace Betweenle
 
 			rand = new Random((int)DateTime.Now.Ticks);
 			StartNewGame();
+
+			SetupPlot();
+		}
+
+		private void SetupPlot()
+		{
+			formsPlot1.Plot.Axes.Margins(0.1, 0.4);
+			CreatePlotData();
+			UpdatePlot();
 		}
 
 		private void SaveRecords()
 		{
-			string json = JsonSerializer.Serialize(records, new JsonSerializerOptions { WriteIndented = true});
+			string json = JsonSerializer.Serialize(records, new JsonSerializerOptions { WriteIndented = true });
 			File.WriteAllText(recordsFilename, json);
+		}
+
+		private void CreatePlotData()
+		{
+			foreach (var record in records.records)
+			{
+				if (!plotRecords.ContainsKey(record.guesses))
+				{
+					plotRecords.Add(record.guesses, 1);
+				}
+				else
+				{
+					plotRecords[record.guesses]++;
+				}
+			}
+		}
+
+		private void AddPlotDatum(int guessCount)
+		{
+			if (!plotRecords.ContainsKey(guessCount))
+			{
+				plotRecords.Add(guessCount, 1);
+			}
+			else
+			{
+				plotRecords[guessCount]++;
+			}
+		}
+
+		private void UpdatePlot()
+		{
+			formsPlot1.Plot.Clear();
+			var barPlot = formsPlot1.Plot.Add.Bars(plotRecords.Keys.ToArray<double>(), plotRecords.Values);
+
+			foreach (var bar in barPlot.Bars)
+			{
+				bar.Label = bar.Value.ToString();
+			}
+
+			barPlot.ValueLabelStyle.Bold = true;
+			barPlot.ValueLabelStyle.FontSize = 18;
+
+			AutoScalePlot();
+		}
+
+		private void AutoScalePlot()
+		{
+			formsPlot1.Plot.Axes.AutoScale();
+			formsPlot1.Refresh();
 		}
 
 		private void LoadRecords(string path)
@@ -71,6 +135,15 @@ namespace Betweenle
 			{
 				wordGuess.Backspace();
 			}
+		}
+
+		private void AddRecord(int guessCount, string word)
+		{
+			records.AddRecord(word, guessCount);
+			SaveRecords();
+
+			AddPlotDatum(guessCount);
+			UpdatePlot();
 		}
 
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -103,6 +176,8 @@ namespace Betweenle
 
 		private bool CheckGuess(string word)
 		{
+			if (alreadyCorrect) return false;
+
 			var testWord = word.ToLower();
 			var topWordIndex = fullWordsList.IndexOf(wordTop.Word.ToLower());
 			var bottomWordIndex = fullWordsList.IndexOf(wordBottom.Word.ToLower());
@@ -113,11 +188,12 @@ namespace Betweenle
 			{
 				guesses++;
 
+				alreadyCorrect = true;
+
 				AddMessage($"Correct! ({word})");
 				wordGuess.TurnGreen();
 
-				records.AddRecord(word, guesses);
-				SaveRecords();
+				AddRecord(guesses, word);
 
 				return true;
 			}
@@ -173,6 +249,7 @@ namespace Betweenle
 		private void StartNewGame()
 		{
 			targetWord = targetWordsList.ElementAt(rand.Next() % targetWordsList.Count);
+			alreadyCorrect = false;
 
 			gauge.Clear();
 
@@ -186,6 +263,11 @@ namespace Betweenle
 		private void btnGiveUp_Click(object sender, EventArgs e)
 		{
 			AddMessage($"You Lose!  Word was {targetWord.ToUpper()}");
+		}
+
+		private void btnScale_Click(object sender, EventArgs e)
+		{
+			AutoScalePlot();
 		}
 	}
 }

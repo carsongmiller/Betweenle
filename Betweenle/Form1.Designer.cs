@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
 			wordTop = new wordleWord();
 			wordBottom = new wordleWord();
 			wordGuess = new wordleWord();
@@ -37,6 +38,8 @@
 			tbGuesses = new TextBox();
 			lblGuesses = new Label();
 			btnGiveUp = new Button();
+			formsPlot1 = new ScottPlot.WinForms.FormsPlot();
+			btnScale = new Button();
 			SuspendLayout();
 			// 
 			// wordTop
@@ -97,6 +100,7 @@
 			// 
 			// tbMessages
 			// 
+			tbMessages.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			tbMessages.Location = new Point(743, 73);
 			tbMessages.Multiline = true;
 			tbMessages.Name = "tbMessages";
@@ -133,11 +137,33 @@
 			btnGiveUp.UseVisualStyleBackColor = true;
 			btnGiveUp.Click += btnGiveUp_Click;
 			// 
+			// formsPlot1
+			// 
+			formsPlot1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			formsPlot1.DisplayScale = 1F;
+			formsPlot1.Location = new Point(12, 511);
+			formsPlot1.Name = "formsPlot1";
+			formsPlot1.Size = new Size(1075, 278);
+			formsPlot1.TabIndex = 16;
+			// 
+			// btnScale
+			// 
+			btnScale.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			btnScale.Location = new Point(1012, 482);
+			btnScale.Name = "btnScale";
+			btnScale.Size = new Size(75, 23);
+			btnScale.TabIndex = 17;
+			btnScale.Text = "Auto Scale";
+			btnScale.UseVisualStyleBackColor = true;
+			btnScale.Click += btnScale_Click;
+			// 
 			// Form1
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(1099, 513);
+			ClientSize = new Size(1099, 801);
+			Controls.Add(btnScale);
+			Controls.Add(formsPlot1);
 			Controls.Add(btnGiveUp);
 			Controls.Add(lblGuesses);
 			Controls.Add(tbGuesses);
@@ -147,8 +173,9 @@
 			Controls.Add(wordGuess);
 			Controls.Add(wordBottom);
 			Controls.Add(wordTop);
+			Icon = (Icon)resources.GetObject("$this.Icon");
 			Name = "Form1";
-			Text = "Form1";
+			Text = "Betweenle";
 			Load += Form1_Load;
 			ResumeLayout(false);
 			PerformLayout();
@@ -165,5 +192,7 @@
 		private TextBox tbGuesses;
 		private Label lblGuesses;
 		private Button btnGiveUp;
+		private ScottPlot.WinForms.FormsPlot formsPlot1;
+		private Button btnScale;
 	}
 }
