@@ -40,6 +40,12 @@
 			btnGiveUp = new Button();
 			formsPlot1 = new ScottPlot.WinForms.FormsPlot();
 			btnScale = new Button();
+			grpStats = new GroupBox();
+			dataGridView1 = new DataGridView();
+			Stat = new DataGridViewTextBoxColumn();
+			Value = new DataGridViewTextBoxColumn();
+			grpStats.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			SuspendLayout();
 			// 
 			// wordTop
@@ -142,15 +148,15 @@
 			// 
 			formsPlot1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			formsPlot1.DisplayScale = 1F;
-			formsPlot1.Location = new Point(12, 511);
+			formsPlot1.Location = new Point(282, 51);
 			formsPlot1.Name = "formsPlot1";
-			formsPlot1.Size = new Size(1075, 278);
+			formsPlot1.Size = new Size(787, 250);
 			formsPlot1.TabIndex = 16;
 			// 
 			// btnScale
 			// 
 			btnScale.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-			btnScale.Location = new Point(1012, 482);
+			btnScale.Location = new Point(994, 22);
 			btnScale.Name = "btnScale";
 			btnScale.Size = new Size(75, 23);
 			btnScale.TabIndex = 17;
@@ -158,13 +164,51 @@
 			btnScale.UseVisualStyleBackColor = true;
 			btnScale.Click += btnScale_Click;
 			// 
+			// grpStats
+			// 
+			grpStats.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			grpStats.Controls.Add(dataGridView1);
+			grpStats.Controls.Add(btnScale);
+			grpStats.Controls.Add(formsPlot1);
+			grpStats.Location = new Point(12, 482);
+			grpStats.Name = "grpStats";
+			grpStats.Size = new Size(1075, 307);
+			grpStats.TabIndex = 18;
+			grpStats.TabStop = false;
+			grpStats.Text = "Stats";
+			// 
+			// dataGridView1
+			// 
+			dataGridView1.AllowUserToAddRows = false;
+			dataGridView1.AllowUserToDeleteRows = false;
+			dataGridView1.AllowUserToResizeRows = false;
+			dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+			dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+			dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Stat, Value });
+			dataGridView1.Location = new Point(3, 19);
+			dataGridView1.Name = "dataGridView1";
+			dataGridView1.Size = new Size(273, 282);
+			dataGridView1.TabIndex = 0;
+			// 
+			// Stat
+			// 
+			Stat.HeaderText = "Stat";
+			Stat.Name = "Stat";
+			Stat.ReadOnly = true;
+			// 
+			// Value
+			// 
+			Value.HeaderText = "Value";
+			Value.Name = "Value";
+			Value.ReadOnly = true;
+			// 
 			// Form1
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(1099, 801);
-			Controls.Add(btnScale);
-			Controls.Add(formsPlot1);
+			Controls.Add(grpStats);
 			Controls.Add(btnGiveUp);
 			Controls.Add(lblGuesses);
 			Controls.Add(tbGuesses);
@@ -178,6 +222,8 @@
 			Name = "Form1";
 			Text = "Betweenle";
 			Load += Form1_Load;
+			grpStats.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -195,5 +241,9 @@
 		private Button btnGiveUp;
 		private ScottPlot.WinForms.FormsPlot formsPlot1;
 		private Button btnScale;
+		private GroupBox grpStats;
+		private DataGridView dataGridView1;
+		private DataGridViewTextBoxColumn Stat;
+		private DataGridViewTextBoxColumn Value;
 	}
 }

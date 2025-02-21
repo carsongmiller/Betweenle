@@ -16,6 +16,7 @@ namespace Betweenle
 		Records records = new Records();
 		string recordsFilename = "records.json";
 		bool alreadyCorrect = false;
+		bool alreadyForfeit = false;
 
 		Dictionary<double, double> plotRecords = new();
 
@@ -38,7 +39,6 @@ namespace Betweenle
 			string fullText = File.ReadAllText("wordsTarget.txt");
 			targetWordsList.AddRange(fullText.Split("\r\n"));
 
-
 			fullWordsList = new List<string>();
 			fullText = File.ReadAllText("wordsFull.txt");
 			fullWordsList.AddRange(fullText.Split("\r\n"));
@@ -49,11 +49,14 @@ namespace Betweenle
 			StartNewGame();
 
 			SetupPlot();
+			UpdateStats();
 		}
 
 		private void SetupPlot()
 		{
 			formsPlot1.Plot.Axes.Margins(0.1, 0.4);
+			formsPlot1.Plot.Axes.Bottom.Label.Text = "# of Guesses";
+			formsPlot1.Plot.Axes.Left.Label.Text = "Frequency";
 			CreatePlotData();
 			UpdatePlot();
 		}
@@ -68,6 +71,8 @@ namespace Betweenle
 		{
 			foreach (var record in records.records)
 			{
+				if (record.forfeit) continue;
+
 				if (!plotRecords.ContainsKey(record.guesses))
 				{
 					plotRecords.Add(record.guesses, 1);
@@ -114,6 +119,40 @@ namespace Betweenle
 			formsPlot1.Refresh();
 		}
 
+		private void UpdateStats()
+		{
+			AddOrUpdateStat("# of Games", records.records.Count);
+			AddOrUpdateStat("# Completed", records.nonForfeitGuessList.Count());
+			AddOrUpdateStat("Standard Deviation", Math.Round(records.StandardDeviation, 1));
+			AddOrUpdateStat("Average", Math.Round(records.mean, 1));
+			AddOrUpdateStat("Mediam", Math.Round(records.median, 1));
+			AddOrUpdateStat("Forfeits", records.forfeits);
+		}
+
+		private void AddOrUpdateStat(string name, double value)
+		{
+			//Check if the row exists, then update it if it does
+			foreach (DataGridViewRow row in dataGridView1.Rows)
+			{
+				if (row.Cells[0].Value == name)
+				{
+					row.Cells[1].Value = value;
+					return;
+				}
+			}
+
+			var newRow = new DataGridViewRow();
+			var cell0 = new DataGridViewTextBoxCell();
+			cell0.Value = name;
+			var cell1 = new DataGridViewTextBoxCell();
+			cell1.Value = value;
+
+			newRow.Cells.Add(cell0);
+			newRow.Cells.Add(cell1);
+
+			dataGridView1.Rows.Add(newRow);
+		}
+
 		private void LoadRecords(string path)
 		{
 			if (File.Exists(path))
@@ -138,13 +177,15 @@ namespace Betweenle
 			}
 		}
 
-		private void AddRecord(int guessCount, string word)
+		private void AddRecord(int guessCount, string word, bool forfeit)
 		{
-			records.AddRecord(word, guessCount);
+			records.AddRecord(word, guessCount, forfeit);
 			SaveRecords();
 
-			AddPlotDatum(guessCount);
+			if (!forfeit) AddPlotDatum(guessCount);
 			UpdatePlot();
+
+			UpdateStats();
 		}
 
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -178,6 +219,11 @@ namespace Betweenle
 		private bool CheckGuess(string word)
 		{
 			if (alreadyCorrect) return false;
+			if (alreadyForfeit)
+			{
+				AddMessage("Start a new game");
+				return false;
+			}
 
 			var testWord = word.ToLower();
 			var topWordIndex = fullWordsList.IndexOf(wordTop.Word.ToLower());
@@ -194,7 +240,7 @@ namespace Betweenle
 				AddMessage($"Correct! ({word})");
 				wordGuess.TurnGreen();
 
-				AddRecord(guesses, word);
+				AddRecord(guesses, word, false);
 
 				return true;
 			}
@@ -251,6 +297,7 @@ namespace Betweenle
 		{
 			targetWord = targetWordsList.ElementAt(rand.Next() % targetWordsList.Count);
 			alreadyCorrect = false;
+			alreadyForfeit = false;
 
 			gauge.Clear();
 
@@ -263,7 +310,14 @@ namespace Betweenle
 
 		private void btnGiveUp_Click(object sender, EventArgs e)
 		{
+			if (alreadyForfeit)
+			{
+				AddMessage("Can't give up twice!");
+				return;
+			}
 			AddMessage($"You Lose!  Word was {targetWord.ToUpper()}");
+			alreadyForfeit = true;
+			AddRecord(guesses, targetWord, true);
 		}
 
 		private void btnScale_Click(object sender, EventArgs e)

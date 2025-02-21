@@ -6,10 +6,19 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <PackageIcon>logo.png</PackageIcon>
+    <RepositoryUrl>https://github.com/carsongmiller/Betweenle</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="ScottPlot.WinForms" Version="5.0.54" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="resources\logo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
